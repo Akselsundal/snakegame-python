@@ -41,9 +41,10 @@ class App:
         self.points = len(self.snake.skeleton)-3 # The points are defined by size of snake
 
         #Making the points-text
-        self.points_text,self.points_text_rect  = self.text_format("Poeng: " + str(self.points), "freesansbold.ttf", 30, JOINT_COLOR, BOARD_LENGTH/2*JOINT_LENGTH, JOINT_LENGTH)
-        self._display_surf.blit(self.points_text, self.points_text_rect)
+
         pygame.display.update()
+        self.points_text,self.points_text_rect  = self.text_format("Poeng: " + str(self.points), None, 30, JOINT_COLOR, BOARD_LENGTH/2*JOINT_LENGTH, JOINT_LENGTH)
+        self._display_surf.blit(self.points_text, self.points_text_rect)
 
 
         # Making the first fruit on random position
@@ -53,11 +54,11 @@ class App:
 
 #Function for formatting text, returns a rendered font and an rect which belongs to the text surface
     def text_format(self, message, textFont, textSize, textColor, centerx, centery):
-        self.newFont=pygame.font.Font(textFont, textSize)
-        self.new_text=self.newFont.render(message, 0, textColor)
-        self.new_rect = self.new_text.get_rect()
-        self.new_rect.center =  (centerx, centery)
-        return (self.new_text, self.new_rect)
+        newFont=pygame.font.Font(textFont, textSize)
+        new_text=newFont.render(message, 0, textColor)
+        new_rect = new_text.get_rect()
+        new_rect.center =  (centerx, centery)
+        return (new_text, new_rect)
 
 
 
@@ -68,23 +69,23 @@ class App:
 
     def on_event(self, events):
         for e in events: #Iterationg through all events concerning keypress
-            self.new_dir = pygame.key.name(e.key) #Setting the temporary direction to the key, before checking
-            self.old = False #This is set to True when I can't use the new_dir(if it is in the oposite direction)
+            new_dir = pygame.key.name(e.key) #Setting the temporary direction to the key, before checking
+            old = False #This is set to True when I can't use the new_dir(if it is in the oposite direction)
 
             if pygame.key.name(e.key) in DIRECTIONS:
-                if DIRECTIONS[self.new_dir][0]*DIRECTIONS[self.dir][0] == -1 or DIRECTIONS[self.new_dir][1]*DIRECTIONS[self.dir][1] == -1:
-                    self.old = True
+                if DIRECTIONS[new_dir][0]*DIRECTIONS[self.dir][0] == -1 or DIRECTIONS[new_dir][1]*DIRECTIONS[self.dir][1] == -1:
+                    old = True
 
             elif pygame.key.name(e.key) not in DIRECTIONS: #If you pressed something that is not in DIRECTIONS
-                self.old = True
+                old = True
 
 
-            if self.old  == True: # If old is true, scrap the new direction
+            if old  == True: # If old is true, scrap the new direction
                 self.snake.move_snake(self.dir)
 
             else: # Else use the new direction
-                self.snake.move_snake(self.new_dir)
-                self.dir = self.new_dir
+                self.snake.move_snake(new_dir)
+                self.dir = new_dir
 
 
     def on_loop(self): #Move the snake
@@ -97,14 +98,10 @@ class App:
         self.snake.draw_snake(self._display_surf) # Draw the snake again
         self.fruit.draw_fruit(self._display_surf) # Draw fruit again
         #Draw points text again
-        self.points_text, self.point_text_rect = self.text_format("Poeng: " + str(self.points), "freesansbold.ttf", 20, JOINT_COLOR, (BOARD_LENGTH/2*JOINT_LENGTH), (JOINT_LENGTH))
+        self.points_text, self.point_text_rect = self.text_format("Poeng: " + str(self.points), "/Users/akselsundal/sync/prosjekt/snakespel_python/lemon_milk/LemonMilk.otf", 20, JOINT_COLOR, (BOARD_LENGTH/2*JOINT_LENGTH), (JOINT_LENGTH))
         self._display_surf.blit(self.points_text, self.points_text_rect)
         pygame.display.update() #aaaand update display
 
-    #This is called after loop
-    def on_cleanup(self):
-
-        pygame.quit()
 
 #-------------------------------------------------------------------------------------------------------------
     #GAME FUNCTIONS
@@ -117,9 +114,9 @@ class App:
         print(self.points)
 
         while fruit_in_snake: #Try to place new fruit
-            self.rand_x = random.randint(1,BOARD_LENGTH-1)
-            self.rand_y = random.randint(1, BOARD_LENGTH-1)
-            self.fruit.set_xy(self.rand_x, self.rand_y) #Setting new x and y pos
+            rand_x = random.randint(1,BOARD_LENGTH-1)
+            rand_y = random.randint(1, BOARD_LENGTH-1)
+            self.fruit.set_xy(rand_x, rand_y) #Setting new x and y pos
             for i in range(len(self.snake.skeleton)):
                 if (self.snake.skeleton[i].x_pos != self.fruit.x_pos) and (self.snake.skeleton[i].y_pos != self.fruit.y_pos):
                     fruit_in_snake = False
@@ -153,27 +150,17 @@ class App:
             if pygame.event.get(pygame.QUIT):
                 self.on_cleanup()
             self.event_queue = pygame.event.get(pygame.KEYDOWN)
+
             if len(self.event_queue) >= 1:
                 self.on_event(self.event_queue)
                 self.check_move()
-
-
             else:
                 self.on_loop()
                 self.check_move()
-
-
             self.on_render()
 
             pygame.time.wait(self.speed)
 
-
-
-    def draw_board(self):
-        for i in range(BOARD_LENGTH):
-            pygame.draw.rect(self._surface, JOINT_COLOR, k*JOINT_LENGTH, 0, JOINT_LENGTH, JOINT_LENGTH)
-        for k in range(1, BOARD_LENGTH):
-            pygame.draw.rect(self._surface,JOINT_COLOR,  0, k*JOINT_LENGTH, JOINT_LENGTH, JOINT_LENGTH)
 
     def on_execute(self):
         if self.on_init() == False:
@@ -182,11 +169,24 @@ class App:
             start_menu(self._display_surf)
             self.game_loop()
         self._running = game_over(self._display_surf, self.points)
-        self.on_cleanup()
+        if self._running == True:
+            self.restart()
+        else:
+            self.on_cleanup()
+
+    def restart(self):
+        self._display_surf.fill(BACK_COLOR) # Fill background
+        new_snake = Snake()
+        self.snake = new_snake
+        self.points=3
+        self.on_execute()
+
+    #This is called after loop
+    def on_cleanup(self):
+
+        pygame.quit()
 
 
-
-ssss
 if __name__ == "__main__":
     the_app = App()
     print("videre fra APP")
