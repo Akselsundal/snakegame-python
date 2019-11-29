@@ -34,11 +34,11 @@ class Joint(pygame.sprite.Sprite):
         self.y_pos = y
 
     def draw_fruit(self, surface):
-        self.rect = (self.x_pos*JOINT_LENGTH, self.y_pos*JOINT_LENGTH, JOINT_LENGTH-SPACE, JOINT_LENGTH-SPACE)
+        rect = (self.x_pos*JOINT_LENGTH, self.y_pos*JOINT_LENGTH, JOINT_LENGTH-SPACE, JOINT_LENGTH-SPACE)
 
-        pygame.draw.rect(surface, FRUIT_COLOR, self.rect)
+        pygame.draw.rect(surface, FRUIT_COLOR, rect)
 
 
     def draw_joint(self, surface):
-        self.rect = (self.x_pos*JOINT_LENGTH, self.y_pos*JOINT_LENGTH, JOINT_LENGTH-SPACE, JOINT_LENGTH-SPACE)
-        pygame.draw.rect(surface, JOINT_COLOR, self.rect)
+        rect = (self.x_pos*JOINT_LENGTH, self.y_pos*JOINT_LENGTH, JOINT_LENGTH-SPACE, JOINT_LENGTH-SPACE)
+        pygame.draw.rect(surface, JOINT_COLOR, rect)

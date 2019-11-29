@@ -90,6 +90,8 @@ class App:
 
     def on_loop(self): #Move the snake
         self.snake.move_snake(self.dir)
+        self.snake.eat_fruit = False
+
 
 
 
@@ -135,6 +137,7 @@ class App:
             if (self.snake.skeleton[0].x_pos == self.snake.skeleton[i].x_pos) and (self.snake.skeleton[0].y_pos == self.snake.skeleton[i].y_pos):
                 self._running = False
 
+            #If head pos is equal to fruit pos
         if (self.snake.skeleton[0].x_pos == self.fruit.x_pos) and (self.snake.skeleton[0].y_pos == self.fruit.y_pos):
             self.eat_fruit()
 
@@ -149,8 +152,9 @@ class App:
         while(self._running):
             if pygame.event.get(pygame.QUIT):
                 self.on_cleanup()
-            self.event_queue = pygame.event.get(pygame.KEYDOWN)
+            self.event_queue = pygame.event.get(pygame.KEYDOWN) #Making event queue with only keypress
 
+            #If there is an event waiting
             if len(self.event_queue) >= 1:
                 self.on_event(self.event_queue)
                 self.check_move()
@@ -159,7 +163,7 @@ class App:
                 self.check_move()
             self.on_render()
 
-            pygame.time.wait(self.speed)
+            pygame.time.wait(self.speed) #Wait framerate
 
 
     def on_execute(self):
