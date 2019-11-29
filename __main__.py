@@ -179,14 +179,14 @@ class App:
         if self.on_init() == False:
             self._running = False
         else:
-            #start_screen = TextScreen()
+            start_menu(self._display_surf)
             self.game_loop()
         self._running = game_over(self._display_surf, self.points)
         self.on_cleanup()
 
 
 
-
+ssss
 if __name__ == "__main__":
     the_app = App()
     print("videre fra APP")
